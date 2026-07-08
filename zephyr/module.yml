@@ -1,7 +1,12 @@
 name: hal_nxp
 build:
-  cmake-ext: True
-  kconfig-ext: True
+  # MobTurret: switched from `cmake-ext: True` + `kconfig-ext: True` to
+  # literal cmake + kconfig paths, so the build finds the top-level
+  # CMakeLists.txt and Kconfig files. The upstream repo no longer ships
+  # those files at the module root, so we added them in this MobTurret
+  # SDK commit (Kconfig, CMakeLists.txt at the module root).
+  cmake: .
+  kconfig: Kconfig
   settings:
     dts_root: .
 blobs:

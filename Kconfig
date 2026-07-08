@@ -1,0 +1,26 @@
+# MobTurret: hal_nxp module Kconfig
+#
+# Restores the top-level Kconfig file that the build expects when a
+# module declares `kconfig: Kconfig` in its module.yml. The upstream
+# `zephyrproject-rtos/hal_nxp` repo removed this file during a
+# restructuring (last seen in commit 15b66bd8e on the abandoned
+# v1.14-branch). Without it, the build fails with:
+#
+#   Could not open '.../nxp_zephyr/' (in 'osource "$(ZEPHYR_HAL_NXP_KCONFIG)"')
+#
+# because kconfiglib falls back to srctree when the env var is empty.
+#
+# For now this file just declares the module exists. The per-SoC
+# configuration (HAS_IMX_HAL, HAS_MCUX, HAS_NXP_S32_HAL) is supplied by
+# the DTS-driven Kconfig generation in Zephyr's build (see
+# gen_driver_kconfig_dts.py), not by static rsource lines.
+
+# Copyright (c) 2021 Linaro, Limited
+# Copyright 2025-2026 NXP
+# SPDX-License-Identifier: Apache-2.0
+
+config ZEPHYR_HAL_NXP_MODULE
+	bool
+	default y
+	help
+	  Enable the NXP HAL module (i.MX, S32, MCUXpresso SDK).
