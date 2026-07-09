@@ -11,13 +11,17 @@
 #    compile (MIMX9352 + MIMX9301 device families, periph/ for
 #    PERI_*.h, common/ for fsl_common.h, plus every peripheral driver
 #    subdir under mcux-sdk-ng/drivers/).
-# 2. Adds the zephyr/src subdirectory (wireless / RW61x source files
+# 2. Adds the SDK source files for the i.MX93 M33 minimal build path:
+#    fsl_clock.c (clock driver) and fsl_lpuart.c (LPUART peripheral).
+#    These provide the symbols (CLOCK_EnableClock, LPUART_Init, etc.)
+#    that Zephyr's HAL drivers consume.
+# 3. Adds the zephyr/src subdirectory (wireless / RW61x source files
 #    preserved from the NXP-downstream era).
 #
 # Full SDK integration (imx/, s32/, mcux/ add_subdirectory with their
 # HAS_* guards, plus per-driver source-file lists) is a separate task.
 # For the i.MX93 M33 minimal hello world we just need headers + the
-# console driver wiring.
+# console + clock + LPUART driver wiring.
 #
 # Copyright (c) 2021 Linaro, Limited
 # Copyright 2024-2026 NXP
@@ -53,6 +57,20 @@ zephyr_include_directories(
   ${_mobturret_sdk_root}/drivers/common
   ${_mobturret_sdk_root}
   ${_mobturret_driver_dirs}
+)
+
+# SDK source files. The SDK ships the C implementations of every
+# peripheral function; Zephyr's HAL drivers consume them via header
+# declarations and rely on the linker to find them. Without these,
+# the link fails with "undefined reference to LPUART_Init" etc.
+#
+# For the i.MX93 M33 minimal hello world we only need the i.MX93 SoC
+# clock driver and the LPUART peripheral. Other peripherals can be
+# added later as their use cases arise (matching the CONDITIONs used
+# in NXP-downstream's per-SoC CMakeLists trees).
+zephyr_sources(
+  ${_mobturret_sdk_root}/devices/i.MX/i.MX93/MIMX9352/drivers/fsl_clock.c
+  ${_mobturret_sdk_root}/drivers/lpuart/fsl_lpuart.c
 )
 
 # Subdirs preserved from the NXP-downstream tree.
