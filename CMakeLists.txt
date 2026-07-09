@@ -6,15 +6,16 @@
 # restructuring. Without it, the build cannot find the module's CMake
 # integration.
 #
-# For now this:
-# 1. Adds the SDK include directories (MIMX9352 + MIMX9301 device
-#    families, with their drivers/ subdirs) so fsl_device_registers.h
-#    and fsl_clock.h are findable for the i.MX93 soc.h files.
+# This file:
+# 1. Adds the SDK include directories needed for the i.MX93 M33 soc to
+#    compile (MIMX9352 + MIMX9301 device families, periph/ for
+#    PERI_*.h, common/ for fsl_common.h, plus every peripheral driver
+#    subdir under mcux-sdk-ng/drivers/).
 # 2. Adds the zephyr/src subdirectory (wireless / RW61x source files
 #    preserved from the NXP-downstream era).
 #
 # Full SDK integration (imx/, s32/, mcux/ add_subdirectory with their
-# HAS_* guards, plus the per-driver source lists) is a separate task.
+# HAS_* guards, plus per-driver source-file lists) is a separate task.
 # For the i.MX93 M33 minimal hello world we just need headers + the
 # console driver wiring.
 #
@@ -22,7 +23,18 @@
 # Copyright 2024-2026 NXP
 # SPDX-License-Identifier: Apache-2.0
 
-# SDK include paths.
+set(_mobturret_sdk_root ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng)
+
+# Auto-discover every peripheral subdir that ships an fsl_*.h header.
+# The SDK has 400+ such subdirs under drivers/, each one home to a
+# peripheral's public C API (fsl_clock.h, fsl_rgpio.h, fsl_lpuart.h, …).
+# The clean way to make all of them includable via the bare `#include
+# "fsl_X.h"` form is to glob them and add each as an include dir.
+file(GLOB _mobturret_driver_dirs
+     LIST_DIRECTORIES true
+     "${_mobturret_sdk_root}/drivers/*/")
+
+# Per-device SDK include dirs:
 # - MIMX9352 is the SoC variant (MIMX9352DVVXM) used by i.MX93 EVK; the
 #   soc.c does `#include <fsl_clock.h>` from MIMX9352/drivers/.
 # - MIMX9301 is the broader device family that includes MIMX9352; it
@@ -33,15 +45,15 @@
 # - common/ holds fsl_common.h, fsl_tickless.h etc. used by fsl_clock.h
 #   and other MIMX9352 drivers.
 zephyr_include_directories(
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352/drivers
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301/drivers
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/periph
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/drivers/common
-  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng
+  ${_mobturret_sdk_root}/devices/i.MX/i.MX93/MIMX9352
+  ${_mobturret_sdk_root}/devices/i.MX/i.MX93/MIMX9352/drivers
+  ${_mobturret_sdk_root}/devices/i.MX/i.MX93/MIMX9301
+  ${_mobturret_sdk_root}/devices/i.MX/i.MX93/MIMX9301/drivers
+  ${_mobturret_sdk_root}/devices/i.MX/i.MX93/periph
+  ${_mobturret_sdk_root}/drivers/common
+  ${_mobturret_sdk_root}
+  ${_mobturret_driver_dirs}
 )
 
 # Subdirs preserved from the NXP-downstream tree.
 add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR}/zephyr/src hal_nxp)
-
