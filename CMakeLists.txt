@@ -28,11 +28,14 @@
 # - MIMX9301 is the broader device family that includes MIMX9352; it
 #   has its own fsl_device_registers.h that we keep on the path for any
 #   code that includes the bare device header.
+# - periph/ holds the PERI_*.h peripheral headers (MIMX9352_cm33.h
+#   includes these via `#include "PERI_ADC.h"` etc.).
 zephyr_include_directories(
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352/drivers
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301/drivers
+  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/periph
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng
 )
 
