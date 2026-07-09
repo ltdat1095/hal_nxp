@@ -7,9 +7,9 @@
 # integration.
 #
 # For now this:
-# 1. Adds the SDK include directories (mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301/
-#    and .../drivers/) so fsl_device_registers.h is findable for the i.MX93
-#    soc headers. This is the minimum needed to compile soc.h files.
+# 1. Adds the SDK include directories (MIMX9352 + MIMX9301 device
+#    families, with their drivers/ subdirs) so fsl_device_registers.h
+#    and fsl_clock.h are findable for the i.MX93 soc.h files.
 # 2. Adds the zephyr/src subdirectory (wireless / RW61x source files
 #    preserved from the NXP-downstream era).
 #
@@ -22,8 +22,15 @@
 # Copyright 2024-2026 NXP
 # SPDX-License-Identifier: Apache-2.0
 
-# SDK include paths (MIMX9352 → MIMX9301 device family)
+# SDK include paths.
+# - MIMX9352 is the SoC variant (MIMX9352DVVXM) used by i.MX93 EVK; the
+#   soc.c does `#include <fsl_clock.h>` from MIMX9352/drivers/.
+# - MIMX9301 is the broader device family that includes MIMX9352; it
+#   has its own fsl_device_registers.h that we keep on the path for any
+#   code that includes the bare device header.
 zephyr_include_directories(
+  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352
+  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352/drivers
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301/drivers
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng
@@ -31,3 +38,4 @@ zephyr_include_directories(
 
 # Subdirs preserved from the NXP-downstream tree.
 add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR}/zephyr/src hal_nxp)
+
