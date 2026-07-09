@@ -30,12 +30,15 @@
 #   code that includes the bare device header.
 # - periph/ holds the PERI_*.h peripheral headers (MIMX9352_cm33.h
 #   includes these via `#include "PERI_ADC.h"` etc.).
+# - common/ holds fsl_common.h, fsl_tickless.h etc. used by fsl_clock.h
+#   and other MIMX9352 drivers.
 zephyr_include_directories(
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9352/drivers
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/MIMX9301/drivers
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/devices/i.MX/i.MX93/periph
+  ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng/drivers/common
   ${CMAKE_CURRENT_LIST_DIR}/mcux/mcux-sdk-ng
 )
 
